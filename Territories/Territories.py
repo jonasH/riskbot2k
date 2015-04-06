@@ -176,3 +176,8 @@ class Territory():
 class Continents():
     def __init__(self):
         self.territories = []
+
+
+class Board(object):
+    def __init__(self, file_name):
+        self.continents = []
