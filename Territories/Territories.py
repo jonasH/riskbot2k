@@ -161,12 +161,12 @@ class Greenland():
         return self.name
 
 class Territory():
-    def __init__(self, name, continent, start_soldiers, owner, connections):
+    def __init__(self, name, continent, start_soldiers):
         self.active_soldiers = start_soldiers
         self.continent = continent
         self.name = name
-        self.owner = owner
-        self.connections = connections
+        self.owner = ""
+        self.connections = []
     def get_active_soldiers(self):
         return self.active_soldiers
     def get_name(self):
@@ -177,6 +177,10 @@ class Territory():
         return self.connections
     def get_continent(self):
         return self.continent
+    def add_connection(self, connection):
+        self.connections.append(connection)
+    def set_owner(self, owner):
+        self.owner = owner
 
 class Continent():
     def __init__(self, name):
@@ -192,6 +196,9 @@ class Continent():
     def get_nbr_territories(self):
         return len(self.territories)
 
+    def add_territory(self, t):
+        self.territories.append(t)
+
 class Board(object):
     def __init__(self):
         self.continents = []
@@ -201,3 +208,6 @@ class Board(object):
 
     def get_nbr_continents(self):
         return len(self.continents)
+
+    def add_continent(self, c):
+        self.continents.append(c)
