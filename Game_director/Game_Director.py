@@ -11,6 +11,7 @@ class Game_Director():
         for t in self.territories:
             self.nbr_soldiers += t.get_starting_soldiers()
         return self.nbr_soldiers
+
     def get_nbr_territories(self):
         return len(self.territories)
 
@@ -19,6 +20,7 @@ class Game_Director():
             return self.get_starting_soldiers()
         else:
             self.nbr_soldiers = self.nbr_soldiers + 3 + self.rules.get_territory_bonus()[self.get_nbr_territories()]
+
     def move_soldiers(self, from_territory, to_territory, nbr_of_soldiers):
         if from_territory.get_name() in territories_names and to_territory.get_name() in territories_names:
             if from_territory.get_active_soldiers() - nbr_of_soldiers >= 1:

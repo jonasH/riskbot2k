@@ -161,23 +161,43 @@ class Greenland():
         return self.name
 
 class Territory():
-    def __init__(self, name, continent, start_soldiers, owner):
+    def __init__(self, name, continent, start_soldiers, owner, connections):
         self.active_soldiers = start_soldiers
         self.continent = continent
         self.name = name
         self.owner = owner
+        self.connections = connections
     def get_active_soldiers(self):
         return self.active_soldiers
     def get_name(self):
         return self.name
     def get_owner(self):
         return self.owner
+    def get_connections(self):
+        return self.connections
+    def get_continent(self):
+        return self.continent
 
-class Continents():
-    def __init__(self):
+class Continent():
+    def __init__(self, name):
         self.territories = []
+        self.name = name
 
+    def get_name(self):
+        return self.name
+
+    def get_territories(self):
+        return self.territories
+
+    def get_nbr_territories(self):
+        return len(self.territories)
 
 class Board(object):
-    def __init__(self, file_name):
+    def __init__(self):
         self.continents = []
+
+    def get_continents(self):
+        return self.continents
+
+    def get_nbr_continents(self):
+        return len(self.continents)
