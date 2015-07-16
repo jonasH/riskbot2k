@@ -60,13 +60,13 @@ class BlobView(ScrollableView):
     #         y = y + GRID_SIZE
 
     def draw_grid(self, board):
-        x, y = 100, 200
+        x, y = 200, 200
         sx, sy = 100, 100
         plopped_regions = []
 
         def find_pos(x, y):
-            for nx in range(-1, 2):
-                for ny in range(-1, 2):
+            for ny in range(-1, 2):
+                for nx in range(-1, 2):
                     if not self.model.find_blob(nx * GRID_SIZE + x, ny * GRID_SIZE + y):
                         point = (nx * GRID_SIZE + x, ny * GRID_SIZE + y)
                         return point
@@ -80,17 +80,18 @@ class BlobView(ScrollableView):
                     pos = find_pos(x, y)
                     x = pos[0]
                     y = pos[1]
-                    self.model.add_blob(Blob(x, y, territory.get_name(), territory.get_active_soldiers(), territory.get_continent()))
+
+                    self.model.add_blob(Blob(x, y, territory))
                     plopped_regions.append(territory.get_name())
                 for connection in territory.get_connections():
                     if connection.get_name() not in plopped_regions and connection.get_continent() == continent.get_name():
                         pos = find_pos(x, y)
                         plopped_regions.append(connection.get_name())
                         self.model.add_blob(
-                            Blob(pos[0], pos[1], connection.get_name(), connection.get_active_soldiers(), connection.get_continent()))
+                            Blob(pos[0], pos[1], connection))
                 x = pos[0]
                 y = pos[1]
-            x += GRID_SIZE * 7
+            x += GRID_SIZE * 10
             y = sy + GRID_SIZE * 2
 
         lista = []
@@ -113,7 +114,7 @@ class BlobView(ScrollableView):
         x, y = event.position
         blob = self.model.find_blob(x, y)
         if blob:
-            print "Territory: " + blob.get_territory() + " in continent: " + blob.get_continent()
+            print "Continent: " + blob.get_continent() + ". Connections are: " + blob.get_connections()
 
     def drag_blob(self, blob, x0, y0):
         for event in self.track_mouse():
@@ -162,11 +163,9 @@ class BlobDoc(Document):
 
 
 class Blob:
-    def __init__(self, x, y, territory, soldiers,continent):
+    def __init__(self, x, y, territory_obj):
         self.rect = (x, y, x + GRID_SIZE, y + GRID_SIZE)
-        self.territory = territory
-        self.start_soldiers = soldiers
-        self.continent = continent
+        self.territory_obj = territory_obj
 
     def contains(self, x, y):
         return pt_in_rect((x, y), self.rect)
@@ -182,23 +181,27 @@ class Blob:
         font_size = 12
         f = Font("Times", font_size, [])
         canvas.font = f
-        st = self.territory.split('_')
+        st = self.territory_obj.get_name().split('_')
         ny = self.rect[1] + 14
         for word in st:
             canvas.show_text(word)
             ny += font_size
             canvas.moveto(self.rect[0] + 2, ny)
-        canvas.moveto(self.rect[0] + (GRID_SIZE - 10 * len(self.start_soldiers)), self.rect[1] + (GRID_SIZE - 3))
-        canvas.show_text(self.start_soldiers)
+        canvas.moveto(self.rect[0] + (GRID_SIZE - 10 * len(self.territory_obj.get_active_soldiers())), self.rect[1] + (GRID_SIZE - 3))
+        canvas.show_text(self.territory_obj.get_active_soldiers())
         canvas.fill_frame_rect(self.rect)
 
     def get_territory(self):
-        return self.territory
+        return self.territory_obj.get_name()
 
     def get_start_soldiers(self):
-        return self.start_soldiers
+        return self.territory_obj.get_active_soldiers()
 
     def get_continent(self):
-        return self.continent
+        return self.territory_obj.get_continent()
+
+    def get_connections(self):
+        cn = [x.get_name() for x in self.territory_obj.get_connections()]
+        return ", ".join(cn)
 
 # BlobApp().run()
