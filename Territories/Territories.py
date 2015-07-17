@@ -1,165 +1,5 @@
 #coding: latin1
 
-territory_dict = {1:'Europe', 2:'Asia', 3:'Africa', 4:'North America', 5:'South America', 6:'Australia'}
-
-#EUROPA
-class Scandinavia():
-    def __init__(self):
-        self.starting_soldiers = 1
-        self.active_soldiers = 1
-        self.territory = territory_dict[1]
-        self.name = "Scandinavia"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Northern_Europe():
-    def __init__(self):
-        self.starting_soldiers = 2
-        self.active_soldiers = 2
-        self.territory = territory_dict[1]
-        self.name = "Northern Europe"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Southern_Europe():
-    def __init__(self):
-        self.starting_soldiers = 2
-        self.active_soldiers = 2
-        self.territory = territory_dict[1]
-        self.name = "Southern Europe"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Iceland():
-    def __init__(self):
-        self.starting_soldiers = 1
-        self.active_soldiers = 1
-        self.territory = territory_dict[1]
-        self.name = "Iceland"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Russia():
-    def __init__(self):
-        self.starting_soldiers = 2
-        self.active_soldiers = 2
-        self.territory = territory_dict[1]
-        self.name = "Russia"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Great_Britain():
-    def __init__(self):
-        self.starting_soldiers = 1
-        self.active_soldiers = 1
-        self.territory = territory_dict[1]
-        self.name = "Great Britain"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Western_Europe():
-    def __init__(self):
-        self.starting_soldiers = 1
-        self.active_soldiers = 1
-        self.territory = territory_dict[1]
-        self.name = "Western Europe"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-#NORD AMERIKA
-class Alaska():
-    def __init__(self):
-        self.starting_soldiers = 2
-        self.active_soldiers = 2
-        self.territory = territory_dict[4]
-        self.name = "Alaska"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Western_Canada():
-    def __init__(self):
-        self.starting_soldiers = 1
-        self.active_soldiers = 1
-        self.territory = territory_dict[4]
-        self.name = "Western Canada"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Central_America():
-    def __init__(self):
-        self.starting_soldiers = 2
-        self.active_soldiers = 2
-        self.territory = territory_dict[4]
-        self.name = "Central America"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Eastern_united_states():
-    def __init__(self):
-        self.starting_soldiers = 2
-        self.active_soldiers = 2
-        self.territory = territory_dict[4]
-        self.name = "Eastern United States"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
-class Greenland():
-    def __init__(self):
-        self.starting_soldiers = 2
-        self.active_soldiers = 2
-        self.territory = territory_dict[4]
-        self.name = "Greenland"
-    def get_starting_soldiers(self):
-        return self.starting_soldiers
-    def get_active_soldiers(self):
-        return self.active_soldiers
-    def get_name(self):
-        return self.name
-
 class Territory():
     def __init__(self, name, continent, start_soldiers):
         self.active_soldiers = start_soldiers
@@ -186,7 +26,7 @@ class Continent():
     def __init__(self, name):
         self.territories = []
         self.name = name
-
+        self.connections = []
     def get_name(self):
         return self.name
 
@@ -199,10 +39,16 @@ class Continent():
     def add_territory(self, t):
         self.territories.append(t)
 
+    def add_connection(self,c):
+        self.connections.append(c)
+
+    def get_connections(self):
+        return self.connections
+
 class Board(object):
     def __init__(self):
         self.continents = []
-
+        self.world = {}
     def get_continents(self):
         return self.continents
 
@@ -211,3 +57,9 @@ class Board(object):
 
     def add_continent(self, c):
         self.continents.append(c)
+
+    def add_world(self, w):
+        self.world = w
+
+    def get_world(self):
+        return self.world

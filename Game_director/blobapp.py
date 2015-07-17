@@ -47,18 +47,6 @@ class BlobApp(Application):
 
 
 class BlobView(ScrollableView):
-    # def draw_grid(self, board):
-    #     x, y = 0, 0
-    #     plopped_regions = []
-    #
-    #     # self.model.add_blob(Blob(x, y))
-    #     for item in board.get_continents():
-    #         for territory in item.get_territories():
-    #             self.model.add_blob(Blob(x, y, territory=territory.get_name(), continent = item.get_name()))
-    #             x = x + GRID_SIZE
-    #         x = 0
-    #         y = y + GRID_SIZE
-
     def draw_grid(self, board):
         x, y = 200, 200
         sx, sy = 100, 100
@@ -73,27 +61,61 @@ class BlobView(ScrollableView):
             else:
                 raise RuntimeError('raaape')
 
-        # self.model.add_blob(Blob(x, y))
-        for continent in board.get_continents():
-            for territory in continent.get_territories():
-                if territory.get_name() not in plopped_regions:
-                    pos = find_pos(x, y)
+        def sort_rankings(r):
+            d = []
+            s = r.values()
+            for c in sorted(s, reverse = True):
+                for name, rank in r.iteritems():
+                    if rank == c:
+                        if name not in d:
+                            d.append(name)
+            return d
+
+        drawn_continents = []
+        for continent in board.get_world():
+            if continent not in drawn_continents:
+                print "Primary loop starting: " + continent
+                drawn_continents.append(continent)
+                for territory in board.get_world()[continent]['territories']:
+                    if territory.get_name() not in plopped_regions:
+                        pos = find_pos(x, y)
+                        x = pos[0]
+                        y = pos[1]
+                        self.model.add_blob(Blob(x, y, territory))
+                        plopped_regions.append(territory.get_name())
+                    for connection in territory.get_connections():
+                        if connection.get_name() not in plopped_regions and connection.get_continent() == continent:
+                            pos = find_pos(x, y)
+                            plopped_regions.append(connection.get_name())
+                            self.model.add_blob(Blob(pos[0], pos[1], connection))
                     x = pos[0]
                     y = pos[1]
+                print "increasing x and y..."
+                x += GRID_SIZE * 10
+                y = sy + GRID_SIZE *2
 
-                    self.model.add_blob(Blob(x, y, territory))
-                    plopped_regions.append(territory.get_name())
-                for connection in territory.get_connections():
-                    if connection.get_name() not in plopped_regions and connection.get_continent() == continent.get_name():
-                        pos = find_pos(x, y)
-                        plopped_regions.append(connection.get_name())
-                        self.model.add_blob(
-                            Blob(pos[0], pos[1], connection))
-                x = pos[0]
-                y = pos[1]
-            x += GRID_SIZE * 10
-            y = sy + GRID_SIZE * 2
-
+            ranked_continents = sort_rankings(board.get_world()[continent]['connecting_continents'])
+            for x1 in range(0,len(ranked_continents)):
+                if ranked_continents[x1] not in drawn_continents:
+                    print "starting: " + str(ranked_continents[x1])
+                    drawn_continents.append(ranked_continents[x1])
+                    for territory in board.get_world()[ranked_continents[x1]]['territories']:
+                        if territory.get_name() not in plopped_regions:
+                            pos = find_pos(x, y)
+                            x = pos[0]
+                            y = pos[1]
+                            self.model.add_blob(Blob(x, y, territory))
+                            plopped_regions.append(territory.get_name())
+                        for connection in territory.get_connections():
+                            if connection.get_name() not in plopped_regions and connection.get_continent() == ranked_continents[x1]:
+                                pos = find_pos(x, y)
+                                plopped_regions.append(connection.get_name())
+                                self.model.add_blob(Blob(pos[0], pos[1], connection))
+                        x = pos[0]
+                        y = pos[1]
+                    print "increasing x and y..."
+                    x += GRID_SIZE * 10
+                    y = sy + GRID_SIZE *2
         lista = []
         settet = set()
         for blob in self.model.blobs:
@@ -204,4 +226,3 @@ class Blob:
         cn = [x.get_name() for x in self.territory_obj.get_connections()]
         return ", ".join(cn)
 
-# BlobApp().run()
