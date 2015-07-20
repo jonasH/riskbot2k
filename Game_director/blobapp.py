@@ -121,6 +121,7 @@ class BlobView(ScrollableView):
             settet.add(blob.get_territory())
         print "Antal territorier utritade: " + str(len(lista))
         print "Antal unika territorier utritade: " + str(len([i for i in settet]))
+
     def draw(self, canvas, update_rect):
         canvas.erase_rect(update_rect)
         canvas.pencolor = black
@@ -133,14 +134,23 @@ class BlobView(ScrollableView):
         x, y = event.position
         blob = self.model.find_blob(x, y)
         if blob:
-            print "Continent: " + blob.get_continent() + ". Connections are: " + blob.get_connections() + ". Owner is: " + blob.get_owner_name()
+            if not event.shift:
+                print "Continent: " + blob.get_continent() + ". Connections are: " + blob.get_connections() + ". Owner is: " + blob.get_owner_name()
+            else:
+                self.drag_blob(blob, x, y)
 
     def drag_blob(self, blob, x0, y0):
+        start_pos = blob.get_position()
         for event in self.track_mouse():
             x, y = event.position
             self.model.move_blob(blob, x - x0, y - y0)
             x0 = x
             y0 = y
+        if self.model.find_blob(x+40,y):
+            print "COMBAT!!! " + blob.get_territory() + " with owner: " + blob.get_owner_name() + " VS " \
+                  + self.model.find_blob(x+40,y).get_territory() + " with owner " + self.model.find_blob(x+40,y).get_owner_name()
+        else:
+            self.model.set_blob_position(blob,start_pos[0], start_pos[1])
 
     def blob_changed(self, model, blob):
         self.invalidate_rect(blob.rect)
@@ -175,6 +185,12 @@ class BlobDoc(Document):
         self.changed()
         self.notify_views('blob_changed', blob)
 
+    def set_blob_position(self, blob, dx, dy):
+        self.notify_views('blob_changed', blob)
+        blob.set_position(dx, dy)
+        self.changed()
+        self.notify_views('blob_changed', blob)
+
     def delete_blob(self, blob):
         self.notify_views('blob_changed', blob)
         self.blobs.remove(blob)
@@ -189,11 +205,18 @@ class Blob:
     def contains(self, x, y):
         return pt_in_rect((x, y), self.rect)
 
+    def get_position(self):
+        pos = (self.rect[0],self.rect[1])
+        return pos
+
     def intersects(self, rect):
         return rects_intersect(rect, self.rect)
 
     def move(self, dx, dy):
         self.rect = offset_rect(self.rect, (dx, dy))
+
+    def set_position(self,dx,dy):
+        self.rect = (dx,dy, dx + GRID_SIZE, dy + GRID_SIZE)
 
     def draw(self, canvas):
         canvas.fill_frame_rect(self.rect)

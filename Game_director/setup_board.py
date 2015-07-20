@@ -6,7 +6,11 @@ from blobapp import BlobApp
 from random import randint
 from GUI.StdColors import black, red, clear, green, blue, yellow
 board = Board()
+
 world_conf = configobj.ConfigObj('..\\conf\\earth_world.ini', configspec='..\\conf\\board_spec.ini')
+
+if not test_connections.test_connections(world_conf):
+    raise RuntimeError
 
 world_dict = {}
 
