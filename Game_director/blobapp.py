@@ -16,7 +16,7 @@ import pickle
 from GUI import Application, ScrollableView, Document, Window, Cursor, rgb, Font
 from GUI.Files import FileType
 from GUI.Geometry import pt_in_rect, offset_rect, rects_intersect
-from GUI.StdColors import black, red, clear
+from GUI.StdColors import black, red, clear, green, white
 
 GRID_SIZE = 50
 
@@ -71,10 +71,11 @@ class BlobView(ScrollableView):
                             d.append(name)
             return d
 
+
+
         drawn_continents = []
         for continent in board.get_world():
             if continent not in drawn_continents:
-                print "Primary loop starting: " + continent
                 drawn_continents.append(continent)
                 for territory in board.get_world()[continent]['territories']:
                     if territory.get_name() not in plopped_regions:
@@ -90,14 +91,12 @@ class BlobView(ScrollableView):
                             self.model.add_blob(Blob(pos[0], pos[1], connection))
                     x = pos[0]
                     y = pos[1]
-                print "increasing x and y..."
                 x += GRID_SIZE * 10
                 y = sy + GRID_SIZE *2
 
             ranked_continents = sort_rankings(board.get_world()[continent]['connecting_continents'])
             for x1 in range(0,len(ranked_continents)):
                 if ranked_continents[x1] not in drawn_continents:
-                    print "starting: " + str(ranked_continents[x1])
                     drawn_continents.append(ranked_continents[x1])
                     for territory in board.get_world()[ranked_continents[x1]]['territories']:
                         if territory.get_name() not in plopped_regions:
@@ -113,7 +112,6 @@ class BlobView(ScrollableView):
                                 self.model.add_blob(Blob(pos[0], pos[1], connection))
                         x = pos[0]
                         y = pos[1]
-                    print "increasing x and y..."
                     x += GRID_SIZE * 10
                     y = sy + GRID_SIZE *2
         lista = []
@@ -123,20 +121,19 @@ class BlobView(ScrollableView):
             settet.add(blob.get_territory())
         print "Antal territorier utritade: " + str(len(lista))
         print "Antal unika territorier utritade: " + str(len([i for i in settet]))
-
     def draw(self, canvas, update_rect):
         canvas.erase_rect(update_rect)
-        canvas.fillcolor = clear
         canvas.pencolor = black
         for blob in self.model.blobs:
             if blob.intersects(update_rect):
+                canvas.fillcolor = blob.get_color()
                 blob.draw(canvas)
 
     def mouse_down(self, event):
         x, y = event.position
         blob = self.model.find_blob(x, y)
         if blob:
-            print "Continent: " + blob.get_continent() + ". Connections are: " + blob.get_connections()
+            print "Continent: " + blob.get_continent() + ". Connections are: " + blob.get_connections() + ". Owner is: " + blob.get_owner_name()
 
     def drag_blob(self, blob, x0, y0):
         for event in self.track_mouse():
@@ -199,19 +196,23 @@ class Blob:
         self.rect = offset_rect(self.rect, (dx, dy))
 
     def draw(self, canvas):
+        canvas.fill_frame_rect(self.rect)
         canvas.moveto(self.rect[0] + 2, self.rect[1] + 14)
         font_size = 12
         f = Font("Times", font_size, [])
         canvas.font = f
+        canvas.textcolor = black
         st = self.territory_obj.get_name().split('_')
         ny = self.rect[1] + 14
         for word in st:
+            if canvas.fillcolor == black:
+                canvas.textcolor = red
             canvas.show_text(word)
             ny += font_size
             canvas.moveto(self.rect[0] + 2, ny)
         canvas.moveto(self.rect[0] + (GRID_SIZE - 10 * len(self.territory_obj.get_active_soldiers())), self.rect[1] + (GRID_SIZE - 3))
         canvas.show_text(self.territory_obj.get_active_soldiers())
-        canvas.fill_frame_rect(self.rect)
+
 
     def get_territory(self):
         return self.territory_obj.get_name()
@@ -226,3 +227,8 @@ class Blob:
         cn = [x.get_name() for x in self.territory_obj.get_connections()]
         return ", ".join(cn)
 
+    def get_owner_name(self):
+        return self.territory_obj.get_owner()
+
+    def get_color(self):
+        return self.territory_obj.get_color()

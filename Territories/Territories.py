@@ -11,8 +11,6 @@ class Territory():
         return self.active_soldiers
     def get_name(self):
         return self.name
-    def get_owner(self):
-        return self.owner
     def get_connections(self):
         return self.connections
     def get_continent(self):
@@ -21,6 +19,11 @@ class Territory():
         self.connections.append(connection)
     def set_owner(self, owner):
         self.owner = owner
+    def get_owner(self):
+        return self.owner.get_name()
+    def get_color(self):
+        return self.owner.get_color()
+
 
 class Continent():
     def __init__(self, name):
