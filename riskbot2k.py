@@ -1,5 +1,5 @@
 __author__ = 'jonas'
-from Territories.Territories import Board
+from model.world import Board
 
 
 def main():
