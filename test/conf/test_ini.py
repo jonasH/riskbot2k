@@ -6,12 +6,6 @@ from validate import Validator
 import os
 import test_connections
 
-#[[iceland]]
-#start_soldiers = 1
-#[[[connections]]]
-#greenland
-#scandinavia
-
 class IniTestCase(unittest.TestCase):
     def test_earthworld(self):
         validator = Validator()

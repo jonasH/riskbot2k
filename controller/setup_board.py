@@ -1,20 +1,24 @@
 __author__ = 'riqv'
-from test.conf import test_connections,test_players
-from Territories.Territories import Territory, Board, Continent
-import configobj
-from blobapp import BlobApp
 from random import randint
+
+import configobj
 from GUI.StdColors import black, red, clear, green, blue, yellow
+
+from test.conf import test_connections,test_players
+from model.world import Territory, Board, Continent
+from view.blobapp import BlobApp
+
 board = Board()
 colors = {'black':black,'red':red,'clear':clear,'green':green,'blue':blue,'yellow':yellow}
+
 world_conf = configobj.ConfigObj('..\\conf\\earth_world.ini', configspec='..\\conf\\board_spec.ini')
 players_conf = configobj.ConfigObj('..\\conf\\players.ini', configspec='..\\conf\\players_spec.ini')
 
 if not test_connections.test_connections(world_conf):
-    raise RuntimeError
+    raise RuntimeError()
 
 if not test_players.test_players(players_conf):
-    raise RuntimeError
+    raise RuntimeError()
 
 world_dict = {}
 
@@ -54,7 +58,7 @@ for continent in world_conf.keys():
 
     for territory in world_conf[continent]:
         ss = world_conf[continent][territory]['start_soldiers']
-        t = Territory(territory, continent, ss)
+        t = Territory(territory, continent, int(ss))
         t.set_owner(decide_player())
         c.add_territory(t)
         world_dict[territory] = t

@@ -17,6 +17,7 @@ from GUI import Application, ScrollableView, Document, Window, Cursor, rgb, Font
 from GUI.Files import FileType
 from GUI.Geometry import pt_in_rect, offset_rect, rects_intersect
 from GUI.StdColors import black, red, clear, green, white
+from controller.game_actions import war
 
 GRID_SIZE = 50
 
@@ -146,13 +147,13 @@ class BlobView(ScrollableView):
             self.model.move_blob(blob, x - x0, y - y0)
             x0 = x
             y0 = y
-        neighbour_territory = self.model.find_blob(x+40,y)
+        neighbour_territory = self.model.find_blob(x,y)
         if neighbour_territory:
-            if neighbour_territory.get_owner_name() != blob.get_owner_name():
-                print "COMBAT!!! " + blob.get_territory() + " with owner: " + blob.get_owner_name() + " VS " \
-                      + self.model.find_blob(x+40,y).get_territory() + " with owner " + self.model.find_blob(x+40,y).get_owner_name()
+            if neighbour_territory.get_owner_name() != blob.get_owner_name() and blob.get_soldiers() > 1:
+                print war(blob.territory, neighbour_territory.territory, blob.get_soldiers()-1).get_owner()
+                self.model.set_blob_position(blob,start_pos[0], start_pos[1])
             else:
-                print "You cannot attack yourself."
+                print "Attacking yourself, or territory has only 1 soldier."
                 self.model.set_blob_position(blob,start_pos[0], start_pos[1])
         else:
             print "No target."
@@ -239,15 +240,15 @@ class Blob:
             canvas.show_text(word)
             ny += font_size
             canvas.moveto(self.rect[0] + 2, ny)
-        canvas.moveto(self.rect[0] + (GRID_SIZE - 10 * len(self.territory_obj.get_active_soldiers())), self.rect[1] + (GRID_SIZE - 3))
-        canvas.show_text(self.territory_obj.get_active_soldiers())
+        canvas.moveto(self.rect[0] + (GRID_SIZE - 10 * len(str(self.get_soldiers()))), self.rect[1] + (GRID_SIZE - 3))
+        canvas.show_text(str(str(self.territory_obj.get_soldiers())))
 
 
     def get_territory(self):
         return self.territory_obj.get_name()
 
-    def get_start_soldiers(self):
-        return self.territory_obj.get_active_soldiers()
+    def get_soldiers(self):
+        return self.territory_obj.get_soldiers()
 
     def get_continent(self):
         return self.territory_obj.get_continent()
@@ -261,3 +262,11 @@ class Blob:
 
     def get_color(self):
         return self.territory_obj.get_color()
+
+    @property
+    def territory(self):
+        return self.territory_obj
+
+    @territory.setter
+    def set_territory_obj(self):
+        return self.territory_obj

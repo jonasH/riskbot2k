@@ -1,7 +1,7 @@
 __author__ = 'Rickard'
 
 import unittest
-from Game_director.Rules import Rules
+from controller.Rules import Rules
 
 class TerritoryTestCase(unittest.TestCase):
     def setUp(self):
