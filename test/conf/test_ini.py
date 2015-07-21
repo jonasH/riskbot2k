@@ -21,6 +21,14 @@ class IniTestCase(unittest.TestCase):
         val = conf.validate(validator)
         self.assertTrue(val)
 
+    def test_players(self):
+        validator = Validator()
+        if os.path.exists('../../conf/players.ini'):
+            conf = configobj.ConfigObj('../../conf/players.ini',
+                                       configspec='../../conf/players_spec.ini')
+        val = conf.validate(validator)
+        self.assertTrue(val)
+
     def test_geography(self):
         config = { 'continent1':{
                         'country1':{'connections':['country2','country3']},
