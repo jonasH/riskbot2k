@@ -18,8 +18,8 @@ class CombatTestCase(unittest.TestCase):
         self.assertGreater(min(res),0)
 
     def test_war(self):
-        with patch.object(Combat, 'throw_die') as mock_method:
-            mock_method.return_value = 6
+        with patch.object(self.ins, 'throw_die') as mock_method:
+            mock_method.return_value = [6]
             res = self.ins.war(self.p1,self.p2)
             self.assertEqual(res['name'],'jonas')
 if __name__ == '__main__':

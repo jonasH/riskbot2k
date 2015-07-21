@@ -40,18 +40,24 @@ class Combat():
             return defender
 
     def war(self,attacker, defender):
-        attacker['throw_results'] = self.throw_die(attacker['soldiers'])
-        defender['throw_results'] = self.throw_die(defender['soldiers'])
-        nbr_throws = min([attacker['soldiers'], defender['soldiers']])
+        attacker['dies'] = self.throw_die(attacker['soldiers'])
+        if defender['soldiers'] >3:
+            defender['dies'] = self.throw_die(defender['soldiers'])
+        else:
+            defender['dies'] = self.throw_die(2)
+        nbr_throws = defender['soldiers']
         for x in range(0, nbr_throws):
-            combat_results = self.combat(max(attacker['throw_results']), max(defender['throw_results']))
-            if combat_results == max(attacker['throw_results']):
+            if attacker['soldiers'] == 0 or len(attacker['dies']) == 0:
+                return winner
+            combat_results = self.combat(max(attacker['dies']), max(defender['dies']))
+            if combat_results == max(attacker['dies']) and combat_results != max(defender['dies']):
                 defender['soldiers'] -= 1
-                attacker['throw_results'].pop(attacker['throw_results'].index(combat_results))
-                defender['throw_results'].pop(defender['throw_results'].index(max(defender['throw_results'])))
-                return attacker
+                attacker['dies'].pop(attacker['dies'].index(combat_results))
+                defender['dies'].pop(defender['dies'].index(max(defender['dies'])))
+                winner = attacker
             else:
                 attacker['soldiers'] -= 1
-                defender['throw_results'].pop(defender['throw_results'].index(combat_results))
-                attacker['throw_results'].pop(attacker['throw_results'].index(max(attacker['throw_results'])))
-            return defender
+                attacker['dies'].pop(attacker['dies'].index(max(attacker['dies'])))
+                defender['dies'].pop(defender['dies'].index(combat_results))
+                winner = defender
+        return winner
