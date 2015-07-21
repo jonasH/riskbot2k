@@ -1,19 +1,22 @@
 __author__ = 'riqv'
-from test.conf import test_connections
+from test.conf import test_connections,test_players
 from Territories.Territories import Territory, Board, Continent
 import configobj
 from blobapp import BlobApp
 from random import randint
 from GUI.StdColors import black, red, clear, green, blue, yellow
 board = Board()
-
+colors = {'black':black,'red':red,'clear':clear,'green':green,'blue':blue,'yellow':yellow}
 world_conf = configobj.ConfigObj('..\\conf\\earth_world.ini', configspec='..\\conf\\board_spec.ini')
+players_conf = configobj.ConfigObj('..\\conf\\players.ini', configspec='..\\conf\\players_spec.ini')
 
 if not test_connections.test_connections(world_conf):
     raise RuntimeError
 
-world_dict = {}
+if not test_players.test_players(players_conf):
+    raise RuntimeError
 
+world_dict = {}
 
 class Player():
     def __init__(self, name, color):
@@ -27,12 +30,10 @@ class Player():
         return self.color
 
 
-names = ['rickard', 'jonas', 'jim']
-colors = [red, black, green]
 players_list = {}
-for p in range(0, len(names)):
-    player = Player(names[p], colors[p])
-    players_list[names[p]] = player
+for p in players_conf:
+    player = Player(p, colors[players_conf[p]['color']])
+    players_list[p] = player
 
 powned_territories = []
 def decide_player():
@@ -42,7 +43,7 @@ def decide_player():
         powned_territories.append(min_player)
         return players_list[min_player]
     else:
-        player = names[randint(0, len(players_list) - 1)]
+        player = players_conf.keys()[randint(0, len(players_list) - 1)]
         powned_territories.append(player)
         return players_list[player]
 

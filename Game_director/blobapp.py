@@ -146,10 +146,16 @@ class BlobView(ScrollableView):
             self.model.move_blob(blob, x - x0, y - y0)
             x0 = x
             y0 = y
-        if self.model.find_blob(x+40,y):
-            print "COMBAT!!! " + blob.get_territory() + " with owner: " + blob.get_owner_name() + " VS " \
-                  + self.model.find_blob(x+40,y).get_territory() + " with owner " + self.model.find_blob(x+40,y).get_owner_name()
+        neighbour_territory = self.model.find_blob(x+40,y)
+        if neighbour_territory:
+            if neighbour_territory.get_owner_name() != blob.get_owner_name():
+                print "COMBAT!!! " + blob.get_territory() + " with owner: " + blob.get_owner_name() + " VS " \
+                      + self.model.find_blob(x+40,y).get_territory() + " with owner " + self.model.find_blob(x+40,y).get_owner_name()
+            else:
+                print "You cannot attack yourself."
+                self.model.set_blob_position(blob,start_pos[0], start_pos[1])
         else:
+            print "No target."
             self.model.set_blob_position(blob,start_pos[0], start_pos[1])
 
     def blob_changed(self, model, blob):

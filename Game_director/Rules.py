@@ -1,5 +1,5 @@
 #coding: latin1
-import numpy
+#import numpy
 
 class Rules():
     def get_territory_bonus(self, numb_territories):

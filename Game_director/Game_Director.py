@@ -1,12 +1,16 @@
-#coding: latin1
+# coding: latin1
 from Territories import Territories
 from .Rules import Rules
+from random import randint
+
+
 class Game_Director():
     def __init__(self, territories):
         self.territories = territories
         self.turn = 0
         self.nbr_soldiers = 0
         self.rules = Rules()
+
     def get_starting_soldiers(self):
         for t in self.territories:
             self.nbr_soldiers += t.get_starting_soldiers()
@@ -21,26 +25,33 @@ class Game_Director():
         else:
             self.nbr_soldiers = self.nbr_soldiers + 3 + self.rules.get_territory_bonus()[self.get_nbr_territories()]
 
-    def move_soldiers(self, from_territory, to_territory, nbr_of_soldiers):
-        if from_territory.get_name() in territories_names and to_territory.get_name() in territories_names:
-            if from_territory.get_active_soldiers() - nbr_of_soldiers >= 1:
-                from_territory.active_soldiers -= nbr_of_soldiers
-                to_territory.active_soldiers += nbr_of_soldiers
-            else:
-                print("Du måste ha minst en soldat i varje territorie")
+
+class Combat():
+    def throw_die(self, throws):
+        throw_list = []
+        for throw in range(0, throws):
+            throw_list.append(randint(1, 6))
+        return throw_list
+
+    def combat(self, attacker, defender):
+        if attacker > defender:
+            return attacker
         else:
-            print("Nu är det fajt!")
+            return defender
 
-
-
-player1 = Game_Director([Territories.Scandinavia(), Territories.Russia(), Territories.Iceland(), Territories.Southern_Europe()])
-
-print((player1.get_starting_soldiers()))
-player1.turn += 1
-player1.set_soldiers_new_round()
-for territory in player1.territories:
-    print((territory.get_name() + ": %d" %territory.get_active_soldiers()))
-print("Flyttar trupper från ")
-player1.move_soldiers(Territories.Scandinavia(), Territories.Russia(), 2)
-for territory in player1.territories:
-    print((territory.get_name() + ": %d" %territory.get_active_soldiers()))
+    def war(self,attacker, defender):
+        attacker['throw_results'] = self.throw_die(attacker['soldiers'])
+        defender['throw_results'] = self.throw_die(defender['soldiers'])
+        nbr_throws = min([attacker['soldiers'], defender['soldiers']])
+        for x in range(0, nbr_throws):
+            combat_results = self.combat(max(attacker['throw_results']), max(defender['throw_results']))
+            if combat_results == max(attacker['throw_results']):
+                defender['soldiers'] -= 1
+                attacker['throw_results'].pop(attacker['throw_results'].index(combat_results))
+                defender['throw_results'].pop(defender['throw_results'].index(max(defender['throw_results'])))
+                return attacker
+            else:
+                attacker['soldiers'] -= 1
+                defender['throw_results'].pop(defender['throw_results'].index(combat_results))
+                attacker['throw_results'].pop(attacker['throw_results'].index(max(attacker['throw_results'])))
+            return defender
